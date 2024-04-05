@@ -1,6 +1,8 @@
 import operator
 import json
 import sys
+import argparse
+import os
 
 
 def write_txt(file_path: str, data: str) -> None:
@@ -10,8 +12,11 @@ def write_txt(file_path: str, data: str) -> None:
         file_path (str): path to file, which we need to fill
         data (str): what we need to write in file
     """
-    with open(file_path, 'w', encoding="UTF-8") as file:
-        file.write(data)
+    try:
+        with open(file_path, 'w', encoding="UTF-8") as file:
+            file.write(data)
+    except Exception as e:
+        print("Произошла ошибка:", e)
 
 
 def read_json(file_path: str) -> dict[str:str]:
@@ -20,8 +25,11 @@ def read_json(file_path: str) -> dict[str:str]:
     Returns:
         dict[str:str]: dictionary with pare (key - value)
     """
-    with open(file_path, 'r', encoding="UTF-8") as file:
-        return json.load(file)
+    try:
+        with open(file_path, 'r', encoding="UTF-8") as file:
+            return json.load(file)
+    except Exception as e:
+        print("Произошла ошибка:", e)
 
 
 def write_json(file_path: str, key: dict) -> None:
@@ -31,8 +39,11 @@ def write_json(file_path: str, key: dict) -> None:
         file_path (str): path to file, which we need to fill
         key (dict): what we need to write in file
     """
-    with open(file_path, 'w', encoding="UTF-8") as file:
-        json.dump(key, file)
+    try:
+        with open(file_path, 'w', encoding="UTF-8") as file:
+            json.dump(key, file)
+    except Exception as e:
+        print("Произошла ошибка:", e)
 
 
 def read_txt(file_path: str) -> str:
@@ -44,8 +55,11 @@ def read_txt(file_path: str) -> str:
     Returns:
         str: what the file contains
     """
-    with open(file_path, "r", encoding="UTF-8") as file:
-        return file.read().replace("\n", " \n")
+    try:
+        with open(file_path, "r", encoding="UTF-8") as file:
+            return file.read().replace("\n", " \n")
+    except Exception as e:
+        print("Произошла ошибка:", e)
 
 
 def text_process(text: str, key: dict) -> str:
@@ -92,9 +106,18 @@ def key_update(dict_key: dict, key: str, val: str) -> None:
 
 
 def main() -> None:
-    path_to, key, path_from = sys.argv[1:4]
-    write_txt(path_to, text_process(
-        read_txt(path_from), read_json(key)))
+    parser = argparse.ArgumentParser(
+        prog='text cipher',
+        description='cipher the text by the key')
+    parser.add_argument('dir', type=str, help="dirrectory with files")
+    parser.add_argument('key', type=str, help=".json file with key")
+    parser.add_argument('original_file', type=str,
+                        help=".txt file with ciphered text")
+    parser.add_argument('result_file', type=str,
+                        help=".txt file with UNciphered text")
+    args = parser.parse_args()
+    write_txt(os.path.join(args.dir, args.result_file), text_process(
+        read_txt(os.path.join(args.dir, args.original_file)), read_json(os.path.join(args.dir, args.key))))
 
 
 if __name__ == '__main__':
