@@ -35,14 +35,14 @@ def frequency_bit(sequence: str) -> float:
         if len(sequence):
             sum = 0
             for bit in sequence:
-                if (bit == "1"):
+                if bit == "1":
                     sum -= 1
                 else:
                     sum += 1
         else:
             return None
-        S = math.fabs(sum/(len(sequence)**0.5))
-        return math.erfc(S/(2**0.5))
+        S = math.fabs(sum / (len(sequence) ** 0.5))
+        return math.erfc(S / (2**0.5))
     except Exception as e:
         print("Error:", e)
 
@@ -59,7 +59,7 @@ def identical_consecutive_bits(sequence: str) -> float:
     try:
         if len(sequence):
             one_freq = sequence.count("1") / len(sequence)
-            if abs(one_freq - 0.5) < (2 / (len(sequence)**0.5)):
+            if abs(one_freq - 0.5) < (2 / (len(sequence) ** 0.5)):
                 V_n = 0
                 for i in range(len(sequence) - 1):
                     if sequence[i] != sequence[i + 1]:
@@ -89,7 +89,7 @@ def longest_sequence_of_ones_in_block(sequence: str) -> float:
         if len(sequence):
             len_block_c = {1: 0, 2: 0, 3: 0, 4: 0}
             for i in range(0, len(sequence), 8):
-                block = sequence[i: i + 8]
+                block = sequence[i : i + 8]
                 len_block = longest_sequence(block, "1")
                 if len_block >= 4:
                     len_block_c[4] += 1
@@ -99,8 +99,7 @@ def longest_sequence_of_ones_in_block(sequence: str) -> float:
                     len_block_c[len_block] += 1
             xi_square = 0
             for i in range(1, 4):
-                xi_square += ((len_block_c[i + 1] -
-                              16 * PI[i]) ** 2) / (16 * PI[i])
+                xi_square += ((len_block_c[i + 1] - 16 * PI[i]) ** 2) / (16 * PI[i])
             return mpmath.gammainc(3 / 2, xi_square / 2)
         else:
             return 0
