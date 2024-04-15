@@ -1,10 +1,10 @@
 import nist
 
-from constants import path
+from constants import PATH
 
 
 def main() -> None:
-    sequences = nist.read_data(path)
+    sequences = nist.read_data(PATH)
     for key in sequences.keys():
         print(key, " results:")
         print("frequency_bit test -->", nist.frequency_bit(sequences[key]))

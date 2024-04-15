@@ -86,23 +86,29 @@ def longest_sequence_of_ones_in_block(sequence: str) -> float:
        float: P-value
     """
     try:
-        if len(sequence):
-            len_block_c = {1: 0, 2: 0, 3: 0, 4: 0}
-            for i in range(0, len(sequence), 8):
-                block = sequence[i : i + 8]
-                len_block = longest_sequence(block, "1")
-                if len_block >= 4:
-                    len_block_c[4] += 1
-                elif len_block <= 1:
-                    len_block_c[1] += 1
-                else:
-                    len_block_c[len_block] += 1
-            xi_square = 0
-            for i in range(1, 4):
-                xi_square += ((len_block_c[i + 1] - 16 * PI[i]) ** 2) / (16 * PI[i])
-            return mpmath.gammainc(3 / 2, xi_square / 2)
-        else:
-            return 0
+        block_max_len = {}
+        length = len(sequence)
+        for step in range(0, length, 8):
+            block = sequence[step: step + 8]
+            block_length = longest_sequence(block, "1")
+            if block_length not in block_max_len:
+                block_max_len[block_length] = 1
+            else:
+                block_max_len[block_length] += 1
+        v = {1: 0, 2: 0, 3: 0, 4: 0}
+        for i in block_max_len:
+            if i <= 1:
+                v[1] += block_max_len[i]
+            elif i == 2:
+                v[2] += block_max_len[i]
+            elif i == 3:
+                v[3] += block_max_len[i]
+            else:
+                v[4] += block_max_len[i]
+        xi_square = 0
+        for i in range(4):
+            xi_square += ((v[i + 1] - 16 * PI[i + 1]) ** 2) / (16 * PI[i + 1])
+        return mpmath.gammainc(3 / 2, xi_square / 2)
     except Exception as e:
         print("Error:", e)
 
@@ -126,8 +132,6 @@ def longest_sequence(sequence: str, elem: str) -> int:
                 if count > max:
                     max = count
             else:
-                if count > max:
-                    max = count
                 count = 0
         return max
     except Exception as e:
