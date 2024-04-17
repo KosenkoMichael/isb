@@ -1,31 +1,63 @@
 import json
 
 
-def read_file(file_path: str, mode: str) -> str:
+def read_file(file_path: str) -> str:
     """get file data
     Args:
         file_path: path to file
-        mode: file open modification
     Returns:
         file data
     """
     try:
-        with open(file_path, mode, encoding="utf-8") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             data = file.read()
         return data
     except Exception as error:
         print(error)
 
 
-def write_file(file_path: str, data: str, mode: str) -> None:
+def read_file_bytes(file_path: str) -> str:
+    """get file data
+    Args:
+        file_path: path to file
+    Returns:
+        file data
+    """
+    try:
+        with open(file_path, "rb") as file:
+            data = file.read()
+        return data
+    except Exception as error:
+        print(error)
+
+
+def write_file(
+    file_path: str,
+    data: str,
+) -> None:
     """write data to file
     Args:
         file_path: path to file
         data: data we need to write
-        mode: file open modification
     """
     try:
-        with open(file_path, mode, encoding="utf-8") as file:
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(data)
+    except Exception as error:
+        print(error)
+
+
+def write_file_bytes(
+    file_path: str,
+    data: str,
+) -> None:
+    """write data to file
+    Args:
+        file_path: path to file
+        data: data we need to write
+    """
+    try:
+        with open(file_path, "wb") as file:
             file.write(data)
     except Exception as error:
         print(error)

@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
 from serialization import symmetric_key_deserialization, symmetric_key_serialization
-from functional import read_file, write_file
+from functional import read_file, read_file_bytes, write_file, write_file_bytes
 
 
 def symmetric_key_generation(bytes_num: int) -> bytes:
@@ -19,7 +19,7 @@ def symmetric_key_generation(bytes_num: int) -> bytes:
     return os.urandom(bytes_num)
 
 
-def symmetric_encription(
+def symmetric_encryption(
     text_file_path: str,
     path_to_symmetric: str,
     path_to_nonce: str,
@@ -37,8 +37,8 @@ def symmetric_encription(
         str: encrypted text
     """
     nonce = symmetric_key_generation(16)
-    symmetric_key_serialization(path_to_nonce, nonce, "wb")
-    origin_text = read_file(text_file_path, "r")
+    symmetric_key_serialization(path_to_nonce, nonce)
+    origin_text = read_file(text_file_path)
     symmetric_key = symmetric_key_deserialization(path_to_symmetric)
     cipher = Cipher(
         algorithms.ChaCha20(symmetric_key, nonce), None, backend=default_backend()
@@ -48,11 +48,11 @@ def symmetric_encription(
     padded_text = padder.update(text_to_bytes) + padder.finalize()
     encryptor = cipher.encryptor()
     encrypted_text = encryptor.update(padded_text) + encryptor.finalize()
-    write_file(encrypted_text_file_path, encrypted_text, "wb")
+    write_file_bytes(encrypted_text_file_path, encrypted_text)
     return encrypted_text
 
 
-def symmetric_decription(
+def symmetric_decryption(
     path_to_symmetric: str,
     path_to_nonce: str,
     path_to_encrypted_text: str,
@@ -69,8 +69,8 @@ def symmetric_decription(
     Returns:
         str: decrypted text
     """
-    nonce = read_file(path_to_nonce, "rb")
-    encrypted_text = read_file(path_to_encrypted_text)
+    nonce = read_file_bytes(path_to_nonce)
+    encrypted_text = read_file_bytes(path_to_encrypted_text)
     symmetric_key = symmetric_key_deserialization(path_to_symmetric)
     cipher = Cipher(
         algorithms.ChaCha20(symmetric_key, nonce), mode=None, backend=default_backend()
@@ -80,5 +80,5 @@ def symmetric_decription(
     unpadder = padding.PKCS7(256).unpadder()
     unpadded_dc_text = unpadder.update(decrypted_text) + unpadder.finalize()
     dec_unpad_text = unpadded_dc_text.decode("UTF-8")
-    write_file(path_to_decrypted_text, dec_unpad_text, "w")
+    write_file(path_to_decrypted_text, dec_unpad_text)
     return dec_unpad_text

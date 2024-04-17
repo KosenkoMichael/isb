@@ -7,7 +7,7 @@ from algoritms.serialization import (
     symmetric_key_deserialization,
     symmetric_key_serialization,
 )
-from algoritms.functional import write_file
+from algoritms.functional import write_file_bytes
 
 
 def asymmetric_key_generation() -> tuple[rsa.RSAPublicKey, rsa.RSAPrivateKey]:
@@ -20,7 +20,7 @@ def asymmetric_key_generation() -> tuple[rsa.RSAPublicKey, rsa.RSAPrivateKey]:
     return key_pair.public_key(), key_pair
 
 
-def asymmetric_encription(
+def asymmetric_encryption(
     path_to_public: str, path_to_symmetric_origin: str, path_to_symmetric_encripted: str
 ) -> None:
     """Symmetric key encription by asymmetric key
@@ -40,14 +40,24 @@ def asymmetric_encription(
             label=None,
         ),
     )
-    write_file(path_to_symmetric_encripted, encripted_key, "wb")
+    write_file_bytes(path_to_symmetric_encripted, encripted_key)
 
 
-def asymmetric_decription(
+def asymmetric_decryption(
     path_to_private: str,
     path_to_symmetric_encripted: str,
     path_to_symmetric_decripted: str,
 ) -> bytes:
+    """Symmetric key decription by asymmetric key
+
+    Args:
+        path_to_private (str): path to private key
+        path_to_symmetric_encripted (str): path to file with encrypted symmetric key
+        path_to_symmetric_decripted (str): path to file with decrypted symmetric key
+
+    Returns:
+        bytes: decrypted key
+    """
     symmetric_encripted = symmetric_key_deserialization(path_to_symmetric_encripted)
     private_key = private_key_deserialization(path_to_private)
     decripted_key = private_key.decrypt(
