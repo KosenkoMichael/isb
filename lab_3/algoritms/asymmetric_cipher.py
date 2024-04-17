@@ -1,0 +1,62 @@
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric import rsa
+from algoritms.serialization import (
+    public_key_deserialization,
+    private_key_deserialization,
+    symmetric_key_deserialization,
+    symmetric_key_serialization,
+)
+from algoritms.functional import write_file
+
+
+def asymmetric_key_generation() -> tuple[rsa.RSAPublicKey, rsa.RSAPrivateKey]:
+    """generate asymmetric key
+
+    Returns:
+        tuple[rsa.RSAPublicKey, rsa.RSAPrivateKey]: public and private keys
+    """
+    key_pair = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    return key_pair.public_key(), key_pair
+
+
+def asymmetric_encription(
+    path_to_public: str, path_to_symmetric_origin: str, path_to_symmetric_encripted: str
+) -> None:
+    """Symmetric key encription by asymmetric key
+
+    Args:
+        path_to_public (str): path to file with public asymmetric key
+        path_to_symmetric_origin (str): path to file with original symmetric key
+        path_to_symmetric_encripted (str): path to save encripted symmetric key
+    """
+    symmetric_key = symmetric_key_deserialization(path_to_symmetric_origin)
+    public_key = public_key_deserialization(path_to_public)
+    encripted_key = public_key.encrypt(
+        symmetric_key,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None,
+        ),
+    )
+    write_file(path_to_symmetric_encripted, encripted_key, "wb")
+
+
+def asymmetric_decription(
+    path_to_private: str,
+    path_to_symmetric_encripted: str,
+    path_to_symmetric_decripted: str,
+) -> bytes:
+    symmetric_encripted = symmetric_key_deserialization(path_to_symmetric_encripted)
+    private_key = private_key_deserialization(path_to_private)
+    decripted_key = private_key.decrypt(
+        symmetric_encripted,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None,
+        ),
+    )
+    symmetric_key_serialization(path_to_symmetric_decripted, decripted_key)
+    return decripted_key
