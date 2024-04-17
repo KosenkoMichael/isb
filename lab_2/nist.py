@@ -1,6 +1,5 @@
 import json
 import math
-
 import mpmath
 
 from constants import PI
