@@ -3,6 +3,7 @@ import os
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
+
 from serialization import symmetric_key_deserialization, symmetric_key_serialization
 from functional import read_file, read_file_bytes, write_file, write_file_bytes
 
