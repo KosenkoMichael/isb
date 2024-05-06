@@ -1,0 +1,14 @@
+CARD_NUM_HASH = "2083ca0a0960daaa60a509a298d2eec8"
+TINKOFF_CREDIT_MASTERCARD_BINS = [
+    518901,
+    521324,
+    544714,
+    524468,
+    528041,
+    538994,
+    551960,
+    553420,
+    553691,
+]
+LAST_4_DIGITS = 1994
+PATH_TO_RESULT = "credit_card_number.txt"
