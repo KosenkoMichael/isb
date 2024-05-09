@@ -12,3 +12,4 @@ TINKOFF_CREDIT_MASTERCARD_BINS = [
 ]
 LAST_4_DIGITS = 1994
 PATH_TO_RESULT = "credit_card_number.txt"
+PATH_TO_PNG = "collizion_time.png"
