@@ -1,9 +1,11 @@
+import multiprocessing as mp
 import hashlib
 import time
 
 from tqdm import tqdm
 from matplotlib import pyplot as plt
-import multiprocessing as mp
+from typing import Optional
+
 
 cores = mp.cpu_count()
 
@@ -88,7 +90,7 @@ def card_num_bruteforce(
     tinkoff_credit_mastercard_bins: list,
     path_to_result: str,
     cores_count: mp.Value = mp.cpu_count(),
-) -> tuple:
+) -> Optional[tuple]:
     """collizions ounf algorithm
 
     Args:
@@ -116,7 +118,7 @@ def card_num_bruteforce(
                 p.terminate()
                 end_time = time.time()
                 return (end_time - start_time, result)
-    return
+    return None
 
 
 def search_time_visualization(
